@@ -37,16 +37,16 @@
             return true;
         }
 
-        public static function isFreeSlotsDate($slots): bool
+        public static function isFreeSlotsDate($slots, $excludedIds = []): bool
         {
             $query = BookingSlot::query();
 
             $query->where(function ($q) use ($slots) {
                 foreach ($slots as $slot) {
                     $q->orWhereBetween('start_time', [$slot['start_time'], $slot['end_time']]);
-                    $q->orWhereBetween('end_time',[ $slot['start_time'], $slot['end_time']]);
+                    $q->orWhereBetween('end_time', [$slot['start_time'], $slot['end_time']]);
                 }
-            });
+            })->whereNotIn('id', $excludedIds);
 
             return !$query->exists();
         }
